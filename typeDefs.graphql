@@ -1,0 +1,56 @@
+# 文字列でスキーマを定義する
+# リゾルバーが返却する型を記述する
+# GraphQL APIのルート型は Query, Mutation, Subscriptionに分けられる
+
+scalar DateTime
+# 列挙型
+enum PhotoCategory {
+  SELFIE
+  PORTRAIT
+  ACTION
+  LANDSCAPE
+  GRAPHIC
+}
+
+type Photo {
+  id: ID!
+  url: String!
+  name: String!
+  description: String
+  category: PhotoCategory!
+  postedBy: User!
+  taggedUsers: [User!]!
+  created: DateTime!
+}
+
+# 入力型
+input PostPhotoInput {
+  name: String!
+  category: PhotoCategory=PORTRAIT
+  description: String
+}
+
+type Query {
+  totalPhotos: Int!
+  # 全てのPhotoを返却する
+  allPhotos: [Photo!]
+}
+
+# 新たに投稿されたPhotoを返却する
+type Mutation {
+  postPhoto(input: PostPhotoInput): Photo!
+  githubAuth(code: String!): AuthPayload!
+}
+
+type User {
+  githubLogin: ID!
+  name: String
+  avatar: String
+  postedPhotos: [Photo!]!
+  inPhotos: [Photo!]!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
